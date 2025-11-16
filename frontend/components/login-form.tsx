@@ -1,7 +1,7 @@
 "use client";
 
 import { cn } from "@/lib/utils";
-import { createClient } from "@/lib/client";
+import { createClient } from "@/lib/supabase/client";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -15,6 +15,7 @@ import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import SignInWithGoogle from "./sign-in-with-google";
 
 export function LoginForm({
   className,
@@ -101,6 +102,15 @@ export function LoginForm({
               </Link>
             </div>
           </form>
+
+          <div className="my-4 flex gap-3 items-center">
+            <div className="grow h-px bg-gray-200"></div>{" "}
+            <span className="text-gray-500 leading-normal">or</span>
+            <div className="grow h-px bg-gray-200"></div>
+          </div>
+          <div className="mt-4">
+            <SignInWithGoogle />
+          </div>
         </CardContent>
       </Card>
     </div>
