@@ -59,7 +59,7 @@ function Header() {
   };
 
   return (
-    <header className="bg-white shadow h-16 w-full px-4">
+    <header className="fixed top-0 left-0 bg-white shadow h-16 w-full px-4">
       <div className="mx-auto max-w-[1200px] flex justify-between items-center h-full">
         <p>Supabase Teams</p>
         <div>

@@ -7,6 +7,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 function TeamsSelect() {
   return (
@@ -25,7 +26,9 @@ function TeamsSelect() {
           </p>
         </CardContent>
         <CardFooter>
-          <Button className="w-full">Join with Code</Button>
+          <Button className="w-full" asChild>
+            <Link href="join-team">Join with Code</Link>
+          </Button>
         </CardFooter>
       </Card>
 
@@ -41,8 +44,8 @@ function TeamsSelect() {
           </p>
         </CardContent>
         <CardFooter>
-          <Button className="w-full" variant="outline">
-            Create New Team
+          <Button className="w-full" asChild variant="outline">
+            <Link href="create-team">Create New Team</Link>
           </Button>
         </CardFooter>
       </Card>
