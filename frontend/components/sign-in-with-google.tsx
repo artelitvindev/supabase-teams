@@ -5,9 +5,8 @@ import { createClient } from "@/lib/supabase/client";
 function SignInWithGoogle() {
   const onClick = async () => {
     const supabase = createClient();
-    console.log(await supabase.auth.getUser());
 
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
         queryParams: {
@@ -16,8 +15,6 @@ function SignInWithGoogle() {
         },
       },
     });
-
-    console.log(data, error);
   };
   return (
     <Button onClick={onClick} className="w-full">

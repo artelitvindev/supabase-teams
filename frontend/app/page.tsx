@@ -1,9 +1,4 @@
-"use client";
-import { useAuthCallbackCleanup } from "@/hooks/useAuthCallbackCleanup";
-
 export default function Home() {
-  useAuthCallbackCleanup("/protected");
-
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-6">
       <div className="flex flex-col items-center gap-6">
