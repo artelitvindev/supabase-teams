@@ -1,5 +1,5 @@
 import GoogleIcon from "@/assets/google.svg?react";
-import { Button } from "./ui/button";
+import { Button } from "../ui/button";
 import { createClient } from "@/lib/supabase/client";
 
 function SignInWithGoogle() {
