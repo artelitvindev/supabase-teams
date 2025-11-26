@@ -2,8 +2,12 @@
 CREATE TABLE public.teams (
     "id" uuid DEFAULT gen_random_uuid() NOT NULL PRIMARY KEY,
     "name" text NOT NULL,
+    "slug" text NOT NULL UNIQUE,  -- <-- Додано slug
     "invite_code" text NOT NULL UNIQUE, 
-    "created_at" timestamptz DEFAULT now() NOT NULL
+    "created_at" timestamptz DEFAULT now() NOT NULL,
+
+    -- Валідація слагу: тільки маленькі літери, цифри та дефіс
+    CONSTRAINT teams_slug_check CHECK (slug ~* '^[a-z0-9-]+$')
 );
 
 -- 2. Створення таблиці PROFILES

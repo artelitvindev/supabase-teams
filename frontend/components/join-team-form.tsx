@@ -13,8 +13,7 @@ function JoinTeamForm() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
-    if (invitationCode) {
-      console.log("submit");
+    if (invitationCode.trim()) {
     } else {
       setErrorMessage("Invitation code field is required");
     }

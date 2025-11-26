@@ -15,10 +15,6 @@ function CreateTeamForm() {
     e.preventDefault();
 
     if (teamName.trim()) {
-      console.log("submit", {
-        teamName: teamName.trim(),
-        teamSlug: teamSlug.trim() || null,
-      });
     } else {
       setErrorMessage("Team name is required");
     }
