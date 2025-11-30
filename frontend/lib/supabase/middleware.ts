@@ -43,6 +43,7 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
   const isAuthPage = pathname.startsWith("/auth");
+  const isSignUpSuccessPage = pathname === ROUTES.SIGN_UP_SUCCESS;
   const isProfileSetupPage = pathname === ROUTES.PROFILE_SETUP;
   const isTeamsSelectPage = pathname === ROUTES.TEAMS_SELECT;
   const isJoinTeamPage = pathname === ROUTES.JOIN_TEAM;
@@ -96,7 +97,7 @@ export async function updateSession(request: NextRequest) {
     }
   } else {
     // User is not authenticated
-    const isProtectedPage = !isAuthPage;
+    const isProtectedPage = !isAuthPage && !isSignUpSuccessPage;
     if (isProtectedPage) {
       // Redirect unauthenticated users to login
       const url = request.nextUrl.clone();

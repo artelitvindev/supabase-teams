@@ -46,11 +46,11 @@ export function SignUpForm({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}${ROUTES.TEAMS_SELECT}`,
+          emailRedirectTo: `${window.location.origin}${ROUTES.PROFILE_SETUP}`,
         },
       });
       if (error) throw error;
-      router.push(ROUTES.PROFILE_SETUP);
+      router.push(ROUTES.SIGN_UP_SUCCESS);
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
