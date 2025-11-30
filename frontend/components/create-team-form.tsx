@@ -5,16 +5,44 @@ import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
+import { createClient } from "@/lib/supabase/client";
+import { toast } from "react-toastify";
 
 function CreateTeamForm() {
   const [teamName, setTeamName] = React.useState("");
   const [teamSlug, setTeamSlug] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const supabase = createClient();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    if (teamName.trim() && teamSlug.trim()) {
+      try {
+        const { data, error } = await supabase.functions.invoke(
+          "team-actions",
+          {
+            body: {
+              action: "create",
+              payload: {
+                name: teamName,
+                slug: teamSlug || undefined,
+              },
+            },
+          }
+        );
 
-    if (teamName.trim()) {
+        if (error) {
+          console.error("Function error:", error);
+          toast.error(`Error: ${error.message}`);
+          return;
+        }
+
+        console.log("Success data:", data);
+        toast.success("Team created successfully!");
+      } catch (error) {
+        console.error("Catch error:", error);
+        toast.error(error instanceof Error ? error.message : "Unknown error");
+      }
     } else {
       setErrorMessage("Team name is required");
     }
@@ -65,7 +93,9 @@ function CreateTeamForm() {
           </div>
         </div>
         <div className="mt-4">
-          <Button className="w-full">Create team</Button>
+          <Button type="submit" className="w-full">
+            Create team
+          </Button>
         </div>
       </form>
     </Card>

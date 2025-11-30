@@ -29,7 +29,7 @@ export const AuthCallbackProvider = ({
 
       if (session) {
         // Clean up the URL and redirect to protected area
-        router.replace("/protected");
+        router.replace("/teams-select");
       } else {
         console.error("Supabase failed to establish session after callback.");
         // Clean up the code parameter even if session failed

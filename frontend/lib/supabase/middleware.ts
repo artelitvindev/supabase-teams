@@ -1,5 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
+import { ROUTES } from "@/lib/routes";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -42,23 +43,64 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
   const isAuthPage = pathname.startsWith("/auth");
-  const isProtectedPage = pathname.startsWith("/protected");
-  const isHomePage = pathname === "/";
+  const isProfileSetupPage = pathname === ROUTES.PROFILE_SETUP;
+  const isTeamsSelectPage = pathname === ROUTES.TEAMS_SELECT;
+  const isJoinTeamPage = pathname === ROUTES.JOIN_TEAM;
+  const isCreateTeamPage = pathname === ROUTES.CREATE_TEAM;
+  const isHomePage = pathname === ROUTES.HOME;
 
   if (user) {
-    // User is authenticated
-    if (isAuthPage || isHomePage) {
-      // Redirect authenticated users from auth pages and home to protected area
-      const url = request.nextUrl.clone();
-      url.pathname = "/protected";
-      return NextResponse.redirect(url);
+    // User is authenticated - check their profile and team status
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("profile_completed, team_id")
+      .eq("id", user.sub)
+      .single();
+
+    const profileCompleted = profile?.profile_completed ?? false;
+    const hasTeam = profile?.team_id != null;
+
+    // Flow enforcement:
+    // 1. If profile not completed -> redirect to profile-setup
+    // 2. If profile completed but no team -> redirect to teams-select
+    // 3. If has team -> allow access to team pages
+
+    if (!profileCompleted) {
+      // Profile not completed - must go to profile-setup first
+      if (!isProfileSetupPage) {
+        const url = request.nextUrl.clone();
+        url.pathname = ROUTES.PROFILE_SETUP;
+        return NextResponse.redirect(url);
+      }
+    } else if (!hasTeam) {
+      // Profile completed but no team - must select/join/create team
+      if (!isTeamsSelectPage && !isJoinTeamPage && !isCreateTeamPage) {
+        const url = request.nextUrl.clone();
+        url.pathname = ROUTES.TEAMS_SELECT;
+        return NextResponse.redirect(url);
+      }
+    } else {
+      // Has team - redirect from setup pages to home
+      if (
+        isProfileSetupPage ||
+        isTeamsSelectPage ||
+        isJoinTeamPage ||
+        isCreateTeamPage ||
+        isAuthPage ||
+        isHomePage
+      ) {
+        const url = request.nextUrl.clone();
+        url.pathname = ROUTES.HOME; // This should redirect to team page
+        return NextResponse.redirect(url);
+      }
     }
   } else {
     // User is not authenticated
-    if (isProtectedPage || isHomePage) {
-      // Redirect unauthenticated users from protected pages and home to login
+    const isProtectedPage = !isAuthPage;
+    if (isProtectedPage) {
+      // Redirect unauthenticated users to login
       const url = request.nextUrl.clone();
-      url.pathname = "/auth/login";
+      url.pathname = ROUTES.LOGIN;
       return NextResponse.redirect(url);
     }
   }

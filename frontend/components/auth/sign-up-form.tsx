@@ -16,6 +16,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import SignInWithGoogle from "./sign-in-with-google";
+import { ROUTES } from "@/lib/routes";
 
 export function SignUpForm({
   className,
@@ -45,11 +46,11 @@ export function SignUpForm({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}/protected`,
+          emailRedirectTo: `${window.location.origin}${ROUTES.TEAMS_SELECT}`,
         },
       });
       if (error) throw error;
-      router.push("/auth/sign-up-success");
+      router.push(ROUTES.PROFILE_SETUP);
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");
     } finally {
@@ -109,7 +110,9 @@ export function SignUpForm({
             </div>
             <div className="mt-4 text-center text-sm">
               Already have an account?{" "}
-              <Link href="/auth/login" className="underline underline-offset-4">
+              <Link
+                href={ROUTES.LOGIN}
+                className="underline underline-offset-4">
                 Login
               </Link>
             </div>
