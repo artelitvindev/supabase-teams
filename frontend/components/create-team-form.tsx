@@ -7,16 +7,19 @@ import { Label } from "./ui/label";
 import { Button } from "./ui/button";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/lib/routes";
 
 function CreateTeamForm() {
   const [teamName, setTeamName] = React.useState("");
   const [teamSlug, setTeamSlug] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const supabase = createClient();
+  const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (teamName.trim() && teamSlug.trim()) {
+    if (teamName.trim()) {
       try {
         const { data, error } = await supabase.functions.invoke(
           "team-actions",
@@ -25,7 +28,7 @@ function CreateTeamForm() {
               action: "create",
               payload: {
                 name: teamName,
-                slug: teamSlug || undefined,
+                slug: teamSlug.trim() || undefined,
               },
             },
           }
@@ -37,7 +40,7 @@ function CreateTeamForm() {
           return;
         }
 
-        console.log("Success data:", data);
+        router.push(ROUTES.TEAM(data.team.id));
         toast.success("Team created successfully!");
       } catch (error) {
         console.error("Catch error:", error);

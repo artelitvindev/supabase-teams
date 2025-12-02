@@ -46,10 +46,11 @@ export function SignUpForm({
         email,
         password,
         options: {
-          emailRedirectTo: `${window.location.origin}${ROUTES.PROFILE_SETUP}`,
+          emailRedirectTo: `${window.location.origin}/auth/callback`,
         },
       });
       if (error) throw error;
+      console.log("success");
       router.push(ROUTES.SIGN_UP_SUCCESS);
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");

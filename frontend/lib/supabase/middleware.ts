@@ -42,19 +42,13 @@ export async function updateSession(request: NextRequest) {
   const user = data?.claims;
 
   const pathname = request.nextUrl.pathname;
-  const isAuthPage = pathname.startsWith("/auth");
   const isProfileSetupPage = pathname === ROUTES.PROFILE_SETUP;
   const isTeamsSelectPage = pathname === ROUTES.TEAMS_SELECT;
   const isJoinTeamPage = pathname === ROUTES.JOIN_TEAM;
   const isCreateTeamPage = pathname === ROUTES.CREATE_TEAM;
+  const isTeamPage = pathname.startsWith("/teams");
 
   if (user) {
-    if (request.nextUrl.searchParams.has("code")) {
-      const url = request.nextUrl.clone();
-      url.searchParams.delete("code");
-      return NextResponse.redirect(url);
-    }
-
     // User is authenticated - check their profile and team status
     const { data: profile } = await supabase
       .from("profiles")
@@ -69,7 +63,7 @@ export async function updateSession(request: NextRequest) {
     // 1. If profile not completed -> redirect to profile-setup
     // 2. If profile completed but no team -> redirect to teams-select
     // 3. If has team -> allow access to team pages
-    console.log(profile);
+
     if (!profileCompleted) {
       // Profile not completed - must go to profile-setup first
       if (!isProfileSetupPage) {
@@ -86,15 +80,9 @@ export async function updateSession(request: NextRequest) {
       }
     } else {
       // Has team - redirect from setup pages to home
-      if (
-        isProfileSetupPage ||
-        isTeamsSelectPage ||
-        isJoinTeamPage ||
-        isCreateTeamPage ||
-        isAuthPage
-      ) {
+      if (!isTeamPage) {
         const url = request.nextUrl.clone();
-        url.pathname = ROUTES.HOME; // This should redirect to team page
+        url.pathname = ROUTES.TEAM(profile.team_id); // This should redirect to team page
         return NextResponse.redirect(url);
       }
     }

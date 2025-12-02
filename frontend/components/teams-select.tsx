@@ -19,7 +19,7 @@ function TeamsSelect() {
             Join an existing team using an invitation code
           </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="grow">
           <p className="text-sm text-muted-foreground">
             If you have received an invitation code from a team member, you can
             use it to join their team and start collaborating.
@@ -37,7 +37,7 @@ function TeamsSelect() {
           <CardTitle>Create a Team</CardTitle>
           <CardDescription>Start a new team and invite members</CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="grow">
           <p className="text-sm text-muted-foreground">
             Create your own team, customize it, and invite team members to
             collaborate on products together.
