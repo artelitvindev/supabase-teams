@@ -69,7 +69,7 @@ export async function updateSession(request: NextRequest) {
     // 1. If profile not completed -> redirect to profile-setup
     // 2. If profile completed but no team -> redirect to teams-select
     // 3. If has team -> allow access to team pages
-
+    console.log(profile);
     if (!profileCompleted) {
       // Profile not completed - must go to profile-setup first
       if (!isProfileSetupPage) {

@@ -61,6 +61,7 @@ Deno.serve(async (req) => {
       .update({
         name: username,
         ...(avatarUrl && { avatar_url: avatarUrl }),
+        profile_completed: true,
       })
       .eq("id", user.id);
 

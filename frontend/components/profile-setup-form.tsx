@@ -15,6 +15,8 @@ import { useState } from "react";
 import { Upload } from "lucide-react";
 import { createClient } from "@/lib/supabase/client";
 import { toast } from "react-toastify";
+import { useRouter } from "next/navigation";
+import { ROUTES } from "@/lib/routes";
 
 export function ProfileSetupForm({
   className,
@@ -24,6 +26,7 @@ export function ProfileSetupForm({
   const [avatar, setAvatar] = useState<File | null>(null);
   const [avatarPreview, setAvatarPreview] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const router = useRouter();
 
   const handleAvatarChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -53,18 +56,15 @@ export function ProfileSetupForm({
         formData.append("avatar", avatar);
       }
 
-      const { data, error } = await supabase.functions.invoke(
-        "update-profile",
-        {
-          body: formData,
-        }
-      );
+      const { error } = await supabase.functions.invoke("update-profile", {
+        body: formData,
+      });
 
       if (error) {
         return toast.error(error.message);
       }
 
-      console.log("username saved and avatar uploaded", data);
+      router.push(ROUTES.TEAMS_SELECT);
       toast.success("Profile updated successfully!");
     } catch (error) {
       if (error instanceof Error) {
