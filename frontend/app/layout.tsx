@@ -1,7 +1,6 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
-import { AuthCallbackProvider } from "@/components/providers/auth-redirect-provider";
 import Header from "@/components/header";
 import { ToastContainer } from "react-toastify";
 
@@ -30,7 +29,7 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         <Header />
-        <AuthCallbackProvider>{children}</AuthCallbackProvider>
+        {children}
         <ToastContainer />
       </body>
     </html>

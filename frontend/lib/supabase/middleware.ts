@@ -1,6 +1,6 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
-import { ROUTES } from "@/lib/routes";
+import { PRIVATE_ROUTES, ROUTES } from "@/lib/routes";
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({
@@ -43,14 +43,18 @@ export async function updateSession(request: NextRequest) {
 
   const pathname = request.nextUrl.pathname;
   const isAuthPage = pathname.startsWith("/auth");
-  const isSignUpSuccessPage = pathname === ROUTES.SIGN_UP_SUCCESS;
   const isProfileSetupPage = pathname === ROUTES.PROFILE_SETUP;
   const isTeamsSelectPage = pathname === ROUTES.TEAMS_SELECT;
   const isJoinTeamPage = pathname === ROUTES.JOIN_TEAM;
   const isCreateTeamPage = pathname === ROUTES.CREATE_TEAM;
-  const isHomePage = pathname === ROUTES.HOME;
 
   if (user) {
+    if (request.nextUrl.searchParams.has("code")) {
+      const url = request.nextUrl.clone();
+      url.searchParams.delete("code");
+      return NextResponse.redirect(url);
+    }
+
     // User is authenticated - check their profile and team status
     const { data: profile } = await supabase
       .from("profiles")
@@ -87,8 +91,7 @@ export async function updateSession(request: NextRequest) {
         isTeamsSelectPage ||
         isJoinTeamPage ||
         isCreateTeamPage ||
-        isAuthPage ||
-        isHomePage
+        isAuthPage
       ) {
         const url = request.nextUrl.clone();
         url.pathname = ROUTES.HOME; // This should redirect to team page
@@ -97,7 +100,7 @@ export async function updateSession(request: NextRequest) {
     }
   } else {
     // User is not authenticated
-    const isProtectedPage = !isAuthPage && !isSignUpSuccessPage;
+    const isProtectedPage = PRIVATE_ROUTES.includes(pathname);
     if (isProtectedPage) {
       // Redirect unauthenticated users to login
       const url = request.nextUrl.clone();
