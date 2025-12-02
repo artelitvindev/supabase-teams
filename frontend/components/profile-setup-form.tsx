@@ -13,6 +13,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useState } from "react";
 import { Upload } from "lucide-react";
+import { createClient } from "@/lib/supabase/client";
+import { toast } from "react-toastify";
 
 export function ProfileSetupForm({
   className,
@@ -38,18 +40,41 @@ export function ProfileSetupForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
     setIsLoading(true);
 
-    // TODO: Implement profile setup logic here
-    // This should:
-    // 1. Upload avatar to storage
-    // 2. Update user profile with username and avatar URL
-    // 3. Set profile_completed = true
-    // 4. Middleware will handle redirect to teams-select
+    try {
+      const supabase = createClient();
 
-    console.log("Profile setup submitted:", { username, avatar });
+      // Create FormData to send file and text data
+      const formData = new FormData();
+      formData.append("username", username);
+      if (avatar) {
+        formData.append("avatar", avatar);
+      }
 
-    setIsLoading(false);
+      const { data, error } = await supabase.functions.invoke(
+        "update-profile",
+        {
+          body: formData,
+        }
+      );
+
+      if (error) {
+        return toast.error(error.message);
+      }
+
+      console.log("username saved and avatar uploaded", data);
+      toast.success("Profile updated successfully!");
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      } else {
+        toast.error("Couldn't update user");
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (

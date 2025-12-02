@@ -4,11 +4,6 @@ import {
   createSupabaseAdmin,
 } from "../_shared/supabaseClient.ts";
 
-interface RequestBody {
-  username: string;
-  avatar?: File | null;
-}
-
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") {
     return new Response("ok", { headers: corsHeaders });
@@ -26,7 +21,10 @@ Deno.serve(async (req) => {
       throw new Error("Unauthorized");
     }
 
-    const { username, avatar }: RequestBody = await req.json();
+    // Parse FormData instead of JSON
+    const formData = await req.formData();
+    const username = formData.get("username") as string;
+    const avatar = formData.get("avatar") as File | null;
 
     if (!username) {
       throw new Error("Username is required");
@@ -36,15 +34,16 @@ Deno.serve(async (req) => {
 
     // Handle avatar upload if provided
     if (avatar) {
-      // Convert base64 or blob to file
-      const fileExt = "png"; // You can extract from avatar data if needed
+      // Extract file extension from the file
+      const fileExt = avatar.name.split(".").pop() || "png";
       const fileName = `avatars/${user.id}.${fileExt}`;
 
-      // Assuming avatar is base64 string or blob
+      // Upload the file
       const { error: uploadError } = await supabaseAdmin.storage
         .from("avatars")
         .upload(fileName, avatar, {
           upsert: true,
+          contentType: avatar.type,
         });
 
       if (uploadError) throw uploadError;
