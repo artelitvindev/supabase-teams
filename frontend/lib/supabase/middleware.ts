@@ -46,7 +46,7 @@ export async function updateSession(request: NextRequest) {
   const isTeamsSelectPage = pathname === ROUTES.TEAMS_SELECT;
   const isJoinTeamPage = pathname === ROUTES.JOIN_TEAM;
   const isCreateTeamPage = pathname === ROUTES.CREATE_TEAM;
-  const isTeamPage = pathname.startsWith("/teams");
+  const isTeamPage = pathname.startsWith("/teams") && pathname !== ROUTES.TEAMS_SELECT;
 
   if (user) {
     // User is authenticated - check their profile and team status
@@ -65,6 +65,7 @@ export async function updateSession(request: NextRequest) {
     // 3. If has team -> allow access to team pages
 
     if (!profileCompleted) {
+      console.log("profile not completed");
       // Profile not completed - must go to profile-setup first
       if (!isProfileSetupPage) {
         const url = request.nextUrl.clone();
@@ -72,6 +73,7 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(url);
       }
     } else if (!hasTeam) {
+      console.log("profile completed but no team");
       // Profile completed but no team - must select/join/create team
       if (!isTeamsSelectPage && !isJoinTeamPage && !isCreateTeamPage) {
         const url = request.nextUrl.clone();
@@ -79,6 +81,7 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(url);
       }
     } else {
+      console.log("profile completed and joined team");
       // Has team - redirect from setup pages to home
       if (!isTeamPage) {
         const url = request.nextUrl.clone();
