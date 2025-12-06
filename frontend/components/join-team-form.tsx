@@ -5,15 +5,35 @@ import { Card, CardDescription, CardHeader, CardTitle } from "./ui/card";
 import { Input } from "./ui/input";
 import { Label } from "./ui/label";
 import { Button } from "./ui/button";
+import { createClient } from "@/lib/supabase/client";
+import { toast } from "react-toastify";
+import { ROUTES } from "@/lib/routes";
+import { useRouter } from "next/navigation";
+import { FunctionsHttpError } from "@supabase/supabase-js";
 
 function JoinTeamForm() {
   const [invitationCode, setInvitationCode] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
+  const subapase = createClient();
+  const router = useRouter();
 
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
     if (invitationCode.trim()) {
+      const { data, error } = await subapase.functions.invoke("team-actions", {
+        body: { action: "join", payload: { inviteCode: invitationCode } },
+      });
+
+      if (error && error instanceof FunctionsHttpError) {
+        const errorMsg = await error.context.json();
+        console.log(errorMsg.error);
+        toast.error(errorMsg.error);
+        return;
+      }
+
+      router.push(ROUTES.TEAM(data.team.id));
+      toast.success("You've joined to team ", data.team.name);
     } else {
       setErrorMessage("Invitation code field is required");
     }
