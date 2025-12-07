@@ -3,88 +3,89 @@ import {
   createSupabaseClient,
   createSupabaseAdmin,
 } from "../_shared/supabaseClient.ts";
+import { ProfilesService } from "./profiles.service.ts";
 
 Deno.serve(async (req) => {
-  if (req.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
-
-  try {
-    const supabase = createSupabaseClient(req);
-    const supabaseAdmin = createSupabaseAdmin();
-
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-
-    if (!user) {
-      throw new Error("Unauthorized");
+  switch (req.method) {
+    case "OPTIONS": {
+      return new Response("ok", { headers: corsHeaders });
     }
 
-    // Parse FormData instead of JSON
-    const formData = await req.formData();
-    const username = formData.get("username") as string;
-    const avatar = formData.get("avatar") as File | null;
+    case "GET": {
+      try {
+        const supabase = createSupabaseClient(req);
+        const supabaseAdmin = createSupabaseAdmin();
 
-    if (!username) {
-      throw new Error("Username is required");
-    }
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
 
-    let avatarUrl: string | null = null;
+        if (!user) {
+          return new Response(JSON.stringify({ error: "Unauthorized" }), {
+            status: 401,
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+          });
+        }
 
-    // Handle avatar upload if provided
-    if (avatar) {
-      // Extract file extension from the file
-      const fileExt = avatar.name.split(".").pop() || "png";
-      const fileName = `avatars/${user.id}.${fileExt}`;
+        const profilesService = new ProfilesService(supabase, supabaseAdmin);
+        const profileRes = await profilesService.getProfile(user.id);
 
-      // Upload the file
-      const { error: uploadError } = await supabaseAdmin.storage
-        .from("avatars")
-        .upload(fileName, avatar, {
-          upsert: true,
-          contentType: avatar.type,
+        return new Response(JSON.stringify(profileRes), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
-
-      if (uploadError) throw uploadError;
-
-      const {
-        data: { publicUrl },
-      } = supabaseAdmin.storage.from("avatars").getPublicUrl(fileName);
-
-      avatarUrl = publicUrl;
+      } catch (error) {
+        return new Response(
+          JSON.stringify({
+            error: error instanceof Error ? error.message : String(error),
+          }),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 400,
+          }
+        );
+      }
     }
 
-    // Update profile
-    const { error: updateError } = await supabaseAdmin
-      .from("profiles")
-      .update({
-        name: username,
-        ...(avatarUrl && { avatar_url: avatarUrl }),
-        profile_completed: true,
-      })
-      .eq("id", user.id);
+    case "PATCH": {
+      try {
+        const supabase = createSupabaseClient(req);
+        const supabaseAdmin = createSupabaseAdmin();
 
-    if (updateError) throw updateError;
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
 
-    return new Response(
-      JSON.stringify({
-        message: "Profile updated successfully",
-        profile: { username, avatar_url: avatarUrl },
-      }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
+        if (!user) {
+          throw new Error("Unauthorized");
+        }
+
+        const profilesService = new ProfilesService(supabase, supabaseAdmin);
+        const profileRes = await profilesService.updateProfile(req, user.id);
+
+        return new Response(JSON.stringify(profileRes), {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
+      } catch (error) {
+        return new Response(
+          JSON.stringify({
+            error: error instanceof Error ? error.message : String(error),
+          }),
+          {
+            headers: { ...corsHeaders, "Content-Type": "application/json" },
+            status: 400,
+          }
+        );
       }
-    );
-  } catch (error) {
-    return new Response(
-      JSON.stringify({
-        error: error instanceof Error ? error.message : String(error),
-      }),
-      {
-        headers: { ...corsHeaders, "Content-Type": "application/json" },
-        status: 400,
-      }
-    );
+    }
+
+    default: {
+      return new Response(
+        JSON.stringify({ error: `Method ${req.method} Not Allowed` }),
+        {
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+          status: 405, // 405 Method Not Allowed
+        }
+      );
+    }
   }
 });
