@@ -28,9 +28,29 @@ Deno.serve(async (req) => {
         }
 
         const profilesService = new ProfilesService(supabase, supabaseAdmin);
-        const profileRes = await profilesService.getProfile(user.id);
 
-        return new Response(JSON.stringify(profileRes), {
+        const url = new URL(req.url);
+        const queryId = url.searchParams.get("id");
+        const isList = url.searchParams.get("list") === "true";
+
+        let responseData;
+
+        if (isList) {
+          const currentUserProfile = await profilesService.getProfile(user.id);
+          const teamId = currentUserProfile.team_id;
+
+          if (teamId) {
+            responseData = await profilesService.getAllProfilesInTeam(teamId);
+          } else {
+            responseData = [];
+          }
+        } else {
+          const targetId = queryId ?? user.id;
+
+          responseData = await profilesService.getProfile(targetId);
+        }
+
+        return new Response(JSON.stringify(responseData), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
       } catch (error) {

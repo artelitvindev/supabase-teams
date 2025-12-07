@@ -1,5 +1,8 @@
 import { SupabaseClient } from "npm:@supabase/supabase-js@2.81.1";
-import { ProfileWithTeamResponse } from "./profiles.dto.ts";
+import {
+  ProfilesListReponse,
+  ProfileWithTeamResponse,
+} from "./profiles.dto.ts";
 
 export class ProfilesService {
   constructor(
@@ -17,7 +20,20 @@ export class ProfilesService {
     if (error) {
       throw error;
     }
+    return data;
+  }
 
+  async getAllProfilesInTeam(teamId: string): Promise<ProfilesListReponse[]> {
+    const { data, error } = await this.supabase
+      .from("profiles")
+      .select("*")
+      .eq("team_id", teamId);
+
+    console.log(data, error);
+
+    if (error) {
+      throw error;
+    }
     return data;
   }
 
