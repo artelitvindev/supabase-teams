@@ -14,13 +14,15 @@ function CreateTeamForm() {
   const [teamName, setTeamName] = React.useState("");
   const [teamSlug, setTeamSlug] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
-  const supabase = createClient();
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     if (teamName.trim()) {
       try {
+        const supabase = createClient();
+
         const { data, error } = await supabase.functions.invoke(
           "team-actions",
           {

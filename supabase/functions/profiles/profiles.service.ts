@@ -89,9 +89,14 @@ export class ProfilesService {
       throw uploadError;
     }
 
-    const {
-      data: { publicUrl },
-    } = this.supabase.storage.from("avatars").getPublicUrl(fileName);
+    const envUrl = Deno.env.get("SUPABASE_URL") ?? "http://127.0.0.1:54321";
+
+    const publicHost = envUrl.replace(
+      "http://kong:8000",
+      "http://127.0.0.1:54321"
+    );
+
+    const publicUrl = `${publicHost}/storage/v1/object/public/avatars/${fileName}`;
 
     return publicUrl;
   }
