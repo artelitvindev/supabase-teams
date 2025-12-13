@@ -10,12 +10,14 @@ import { toast } from "react-toastify";
 import { ROUTES } from "@/lib/routes";
 import { useRouter } from "next/navigation";
 import { FunctionsHttpError } from "@supabase/supabase-js";
+import { useProfile } from "@/hooks/useProfile";
 
 function JoinTeamForm() {
   const [invitationCode, setInvitationCode] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const subapase = createClient();
   const router = useRouter();
+  useProfile();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

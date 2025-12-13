@@ -1,9 +1,9 @@
 import { create } from "zustand";
-import { ProfileWithTeamResponse } from "@/types/profiles.api";
+import { Profile } from "@/types/profiles.api";
 
 interface ProfileStore {
-  profile: ProfileWithTeamResponse | null;
-  setProfile: (profileRes: ProfileWithTeamResponse) => void;
+  profile: Profile | null;
+  setProfile: (profileRes: Profile) => void;
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
 }

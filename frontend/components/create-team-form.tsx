@@ -9,12 +9,14 @@ import { createClient } from "@/lib/supabase/client";
 import { toast } from "react-toastify";
 import { useRouter } from "next/navigation";
 import { ROUTES } from "@/lib/routes";
+import { useProfile } from "@/hooks/useProfile";
 
 function CreateTeamForm() {
   const [teamName, setTeamName] = React.useState("");
   const [teamSlug, setTeamSlug] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const router = useRouter();
+  useProfile();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();

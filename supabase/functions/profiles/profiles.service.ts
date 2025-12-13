@@ -1,8 +1,5 @@
 import { SupabaseClient } from "npm:@supabase/supabase-js@2.81.1";
-import {
-  ProfilesListReponse,
-  ProfileWithTeamResponse,
-} from "./profiles.dto.ts";
+import { ProfilesListReponse, Profile } from "./profiles.dto.ts";
 
 export class ProfilesService {
   constructor(
@@ -10,10 +7,10 @@ export class ProfilesService {
     private readonly supabaseAdmin: SupabaseClient
   ) {}
 
-  async getProfile(userId: string): Promise<ProfileWithTeamResponse> {
+  async getProfile(userId: string): Promise<Profile> {
     const { data, error } = await this.supabase
       .from("profiles")
-      .select(`*, team:team_id (*)`)
+      .select("*")
       .eq("id", userId)
       .single();
 
@@ -37,10 +34,7 @@ export class ProfilesService {
     return data;
   }
 
-  async updateProfile(
-    req: Request,
-    userId: string
-  ): Promise<ProfileWithTeamResponse> {
+  async updateProfile(req: Request, userId: string): Promise<Profile> {
     const formData = await req.formData();
 
     const usernameEntry = formData.get("username");
@@ -64,7 +58,7 @@ export class ProfilesService {
         profile_completed: true,
       })
       .eq("id", userId)
-      .select(`*, team:team_id (*)`)
+      .select("*")
       .single();
 
     if (updateError) {

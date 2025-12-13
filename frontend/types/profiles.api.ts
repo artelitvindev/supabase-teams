@@ -10,11 +10,8 @@ export interface Profile {
   id: string;
   name: string;
   avatar_url: string;
-  team_id: string;
-}
-
-export interface ProfileWithTeamResponse extends Profile {
-  team: Team;
+  team_id: string | null;
+  profile_completed: boolean;
 }
 
 export type ProfilesListReponse = Profile[];

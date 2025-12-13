@@ -56,7 +56,8 @@ export function ProfileSetupForm({
         formData.append("avatar", avatar);
       }
 
-      const { error } = await supabase.functions.invoke("update-profile", {
+      const { error } = await supabase.functions.invoke("profiles", {
+        method: "PATCH",
         body: formData,
       });
 

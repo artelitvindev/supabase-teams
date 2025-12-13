@@ -6,15 +6,23 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Users, Calendar, Hash } from "lucide-react";
 import CopyTextButton from "@/components/copy-text-button";
 import { TeamPageSkeleton } from "@/components/skeletons/team-page-skeleton";
+import { useTeamMembers } from "@/hooks/useTeamMembers";
+import { useTeam } from "@/hooks/useTeam";
+import { useParams } from "next/navigation";
 
 function TeamPage() {
-  const { profile, isLoading } = useProfileStore();
+  const params = useParams();
+  const teamId = params.teamId as string;
 
-  if (isLoading) {
+  const { profile, isLoading: isLoadingProfile } = useProfileStore();
+  const { team, isLoading: isLoadingTeam } = useTeam(teamId);
+  const { teamMembers, isLoading: isLoadingTeamMembers } = useTeamMembers();
+
+  if (isLoadingProfile || isLoadingTeam || isLoadingTeamMembers) {
     return <TeamPageSkeleton />;
   }
 
-  if (!profile) {
+  if (!team) {
     return (
       <div className="container mx-auto p-6">
         <p className="text-gray-500">No team data available</p>
@@ -22,7 +30,6 @@ function TeamPage() {
     );
   }
 
-  const { team } = profile;
   const teamCreatedDate = new Date(team.created_at).toLocaleDateString(
     "en-US",
     {
@@ -61,7 +68,7 @@ function TeamPage() {
             <Users className="size-5 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">1</div>
+            <div className="text-2xl font-bold">{teamMembers.length}</div>
             <p className="text-xs text-muted-foreground mt-1">
               Active team members
             </p>
@@ -95,22 +102,29 @@ function TeamPage() {
         <CardContent>
           <div className="space-y-4">
             {/* Current user as a member */}
-            <div className="flex items-center gap-4 p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
-              <Avatar className="h-12 w-12">
-                <AvatarImage src={profile.avatar_url} alt={profile.name} />
-                <AvatarFallback>
-                  {profile.name
-                    .split(" ")
-                    .map((n) => n[0])
-                    .join("")
-                    .toUpperCase()}
-                </AvatarFallback>
-              </Avatar>
-              <div className="flex-1">
-                <p className="font-medium">{profile.name}</p>
-                <p className="text-sm text-muted-foreground">You</p>
+            {teamMembers.map((teamMember) => (
+              <div
+                key={"team-member-" + teamMember.id}
+                className="flex items-center gap-4 p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage
+                    src={teamMember.avatar_url}
+                    alt={teamMember.name}
+                  />
+                  <AvatarFallback>
+                    {teamMember?.name
+                      ?.split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div className="flex-1">
+                  <p className="font-medium">{teamMember.name}</p>
+                  <p className="text-sm text-muted-foreground">You</p>
+                </div>
               </div>
-            </div>
+            ))}
             {/* TODO: Fetch and display other team members */}
           </div>
         </CardContent>

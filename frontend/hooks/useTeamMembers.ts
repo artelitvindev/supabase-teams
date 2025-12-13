@@ -13,10 +13,13 @@ export function useTeamMembers() {
 
       const supabase = createClient();
 
-      const { data, error } = await supabase.functions.invoke("profiles", {
-        method: "GET",
-        body: { list: true },
-      });
+      const { data, error } = await supabase.functions.invoke(
+        "profiles?list=true",
+        {
+          method: "GET",
+        }
+      );
+      console.log(data);
 
       if (error) {
         setIsLoading(false);
