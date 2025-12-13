@@ -10,32 +10,15 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import React from "react";
 import { Button } from "./ui/button";
 import Link from "next/link";
-import { ProfileWithTeamResponse } from "@/types/profiles.api";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import { useProfile } from "@/hooks/useProfile";
 
 function Header() {
-  const [isLoading, setIsLoading] = React.useState(true);
-  const [profile, setProfile] = React.useState<ProfileWithTeamResponse | null>(
-    null
-  );
   const router = useRouter();
 
-  React.useEffect(() => {
-    async function fetchUser() {
-      const supabase = createClient();
-
-      const { data } = await supabase.functions.invoke("profiles", {
-        method: "GET",
-      });
-
-      setProfile(data);
-      setIsLoading(false);
-    }
-    fetchUser();
-  }, []);
+  const { profile, isLoading } = useProfile();
 
   const onLogout = async () => {
     const supabase = createClient();
