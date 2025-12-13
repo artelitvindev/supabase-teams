@@ -13,12 +13,11 @@ import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import { useProfile } from "@/hooks/useProfile";
+import useProfileStore from "@/zustand/useProfileStore";
 
 function Header() {
+  const { profile, isLoading } = useProfileStore();
   const router = useRouter();
-
-  const { profile, isLoading } = useProfile();
 
   const onLogout = async () => {
     const supabase = createClient();

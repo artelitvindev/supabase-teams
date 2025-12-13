@@ -16,6 +16,10 @@ export const ROUTES = {
 
   // Teams
   TEAM: (teamId: string) => `teams/${teamId}`,
+  TEAM_PRODUCTS: (teamId: string) => `teams/${teamId}`,
+
+  // User
+  PROFILE: (userId: string) => `profiles/${userId}`,
 };
 
 export const PRIVATE_ROUTES = [

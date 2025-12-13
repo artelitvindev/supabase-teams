@@ -1,17 +1,16 @@
 import { createClient } from "@/lib/supabase/client";
-import { ProfileWithTeamResponse } from "@/types/profiles.api";
 import { toastSupabaseError } from "@/utils/toastSupabaseError";
-import { useEffect, useState } from "react";
+import useProfileStore from "@/zustand/useProfileStore";
+import { useEffect } from "react";
 
 export function useProfile() {
-  const [isLoading, setIsLoading] = useState(true);
-  const [profile, setProfile] = useState<ProfileWithTeamResponse | null>(null);
+  const { setProfile, setIsLoading } = useProfileStore();
 
   useEffect(() => {
     async function fetchUser() {
       const supabase = createClient();
 
-      const { data, error } = await supabase.functions.invoke("profilesf", {
+      const { data, error } = await supabase.functions.invoke("profiles", {
         method: "GET",
       });
 
@@ -25,7 +24,5 @@ export function useProfile() {
     }
 
     fetchUser();
-  }, []);
-
-  return { profile, isLoading };
+  }, [setIsLoading, setProfile]);
 }
