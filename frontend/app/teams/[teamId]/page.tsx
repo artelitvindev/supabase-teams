@@ -4,6 +4,7 @@ import useProfileStore from "@/zustand/useProfileStore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Users, Calendar, Hash } from "lucide-react";
+import CopyTextButton from "@/components/copy-text-button";
 
 function TeamPage() {
   const { profile, isLoading } = useProfileStore();
@@ -53,8 +54,8 @@ function TeamPage() {
       <div className="grid gap-6 md:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Team Slug</CardTitle>
-            <Hash className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-base font-medium">Team Slug</CardTitle>
+            <Hash className="size-5 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">{team.slug}</div>
@@ -66,8 +67,8 @@ function TeamPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Members</CardTitle>
-            <Users className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-base font-medium">Members</CardTitle>
+            <Users className="size-5 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">1</div>
@@ -79,8 +80,8 @@ function TeamPage() {
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Created</CardTitle>
-            <Calendar className="h-4 w-4 text-muted-foreground" />
+            <CardTitle className="text-base font-medium">Created</CardTitle>
+            <Calendar className="size-5 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
@@ -136,17 +137,25 @@ function TeamPage() {
               <h3 className="text-sm font-medium text-muted-foreground mb-1">
                 Team ID
               </h3>
-              <p className="text-sm font-mono bg-muted p-2 rounded">
-                {team.id}
-              </p>
+              <div className="group max-w-[500px] relative text-sm font-mono bg-muted p-2 rounded">
+                <p>{team.id}</p>
+                <CopyTextButton
+                  text={team.id}
+                  className="group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 right-3"
+                />
+              </div>
             </div>
             <div>
               <h3 className="text-sm font-medium text-muted-foreground mb-1">
                 Invite Code
               </h3>
-              <p className="text-sm font-mono bg-muted p-2 rounded">
-                {team.invite_code}
-              </p>
+              <div className="group max-w-[500px] relative text-sm font-mono bg-muted p-2 rounded">
+                <p>{team.invite_code}</p>
+                <CopyTextButton
+                  text={team.invite_code}
+                  className="group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 right-3"
+                />
+              </div>
             </div>
           </div>
         </CardContent>
