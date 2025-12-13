@@ -15,11 +15,11 @@ export const ROUTES = {
   CREATE_TEAM: "/create-team",
 
   // Teams
-  TEAM: (teamId: string) => `teams/${teamId}`,
-  TEAM_PRODUCTS: (teamId: string) => `teams/${teamId}`,
+  TEAM: (teamId: string) => `/teams/${teamId}`,
+  TEAM_PRODUCTS: (teamId: string) => `/teams/${teamId}/products`,
 
   // User
-  PROFILE: (userId: string) => `profiles/${userId}`,
+  PROFILE: (userId: string) => `/profiles/${userId}`,
 };
 
 export const PRIVATE_ROUTES = [

@@ -6,33 +6,40 @@ import useProfileStore from "@/zustand/useProfileStore";
 import { HomeIcon, SettingsIcon, ShoppingBagIcon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { SidebarSkeleton } from "@/components/skeletons/sidebar-skeleton";
 
 function Sidebar() {
-  const profile = useProfileStore((state) => state.profile);
+  const { profile, isLoading } = useProfileStore();
   const pathname = usePathname();
 
-  console.log(profile?.team_id);
-
-  const navLinkClassName = () =>
+  const navLinkClassName = (route: string) =>
     cn(
-      "h-12 px-3 flex items-center gap-3 rounded-md text-xl border transition-colors border-transparent hover:bg-gray-200",
+      "h-12 px-3 flex items-center gap-3 rounded-md text-xl border-2 transition-colors border-transparent hover:bg-gray-200",
       {
         "border-emerald-500 text-emerald-500 hover:bg-emerald-50!":
-          pathname === "",
+          pathname === route,
       }
     );
 
+  if (isLoading || !profile) {
+    return <SidebarSkeleton />;
+  }
+
   return (
     <div className="basis-[300px] flex flex-col gap-2 py-6 px-4 bg-gray-50 border-gray-200 border rounded-md min-h-[calc(100vh-90px)]">
-      <Link className={navLinkClassName()} href={ROUTES.TEAM("profile")}>
+      <Link
+        className={navLinkClassName(ROUTES.TEAM(profile.team_id))}
+        href={ROUTES.TEAM(profile.team_id)}>
         <HomeIcon className="size-6" /> Home
       </Link>
       <Link
-        className={navLinkClassName()}
-        href={ROUTES.TEAM_PRODUCTS("profile")}>
+        className={navLinkClassName(ROUTES.TEAM_PRODUCTS(profile.team_id))}
+        href={ROUTES.TEAM_PRODUCTS(profile.team_id)}>
         <ShoppingBagIcon className="size-6" /> Products
       </Link>
-      <Link className={navLinkClassName()} href={ROUTES.PROFILE("profile")}>
+      <Link
+        className={navLinkClassName(ROUTES.PROFILE(profile.id))}
+        href={ROUTES.PROFILE(profile.id)}>
         <SettingsIcon className="size-6" /> Profile
       </Link>
     </div>

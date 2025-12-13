@@ -4,7 +4,7 @@ import useProfileStore from "@/zustand/useProfileStore";
 import { useEffect } from "react";
 
 export function useProfile() {
-  const { setProfile, setIsLoading } = useProfileStore();
+  const { setProfile, setIsLoading, isLoading } = useProfileStore();
 
   useEffect(() => {
     async function fetchUser() {
@@ -25,4 +25,6 @@ export function useProfile() {
 
     fetchUser();
   }, [setIsLoading, setProfile]);
+
+  return { isLoading };
 }

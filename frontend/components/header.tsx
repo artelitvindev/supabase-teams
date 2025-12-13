@@ -14,6 +14,7 @@ import { Button } from "./ui/button";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import useProfileStore from "@/zustand/useProfileStore";
+import { HeaderProfileSkeleton } from "@/components/skeletons/header-profile-skeleton";
 
 function Header() {
   const { profile, isLoading } = useProfileStore();
@@ -31,9 +32,11 @@ function Header() {
       <div className="flex justify-between items-center h-full">
         <p>Supabase Teams</p>
         <div>
-          {!isLoading && (
+          {isLoading ? (
+            <HeaderProfileSkeleton />
+          ) : (
             <>
-              {profile && !isLoading ? (
+              {profile ? (
                 <DropdownMenu>
                   <DropdownMenuTrigger className="cursor-pointer focus:outline-0">
                     <div className="flex gap-2 items-center">
