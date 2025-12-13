@@ -3,26 +3,12 @@ import { toastSupabaseError } from "@/utils/toastSupabaseError";
 import useProfileStore from "@/zustand/useProfileStore";
 import React, { useEffect } from "react";
 
-interface UseProfileOptions {
-  skip?: boolean;
-}
-
-export function useProfile(options: UseProfileOptions = {}) {
-  const { skip = false } = options;
+export function useProfile() {
   const { setProfile, setIsLoading, isLoading } = useProfileStore();
   const [errorStatus, setErrorStatus] = React.useState<number | null>(null);
 
   useEffect(() => {
-    // Skip fetching profile on public routes
-    if (skip) {
-      setIsLoading(false);
-      return;
-    }
-
     async function fetchUser() {
-      setIsLoading(true);
-      setErrorStatus(null); // Reset error status on each fetch
-
       const supabase = createClient();
 
       const { data, error } = await supabase.functions.invoke("profiles", {
@@ -44,11 +30,10 @@ export function useProfile(options: UseProfileOptions = {}) {
 
       setProfile(data);
       setIsLoading(false);
-      setErrorStatus(null); // Clear any previous errors
     }
 
     fetchUser();
-  }, [setIsLoading, setProfile, skip]);
+  }, [setIsLoading, setProfile]);
 
   const isAuthError = errorStatus === 401 || errorStatus === 403;
   const isError = errorStatus !== null;

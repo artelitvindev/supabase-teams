@@ -10,7 +10,7 @@ export function ProfileProvider({ children }: { children: React.ReactNode }) {
   const isPublicRoute =
     PUBLIC_ROUTES.includes(pathname) || pathname.startsWith("/auth");
 
-  const { isAuthError } = useProfile({ skip: isPublicRoute });
+  const { isAuthError } = useProfile();
   const router = useRouter();
 
   useEffect(() => {
