@@ -8,24 +8,16 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { createClient } from "@/lib/supabase/client";
-import { useRouter } from "next/navigation";
 import { Button } from "./ui/button";
 import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import useProfileStore from "@/zustand/useProfileStore";
 import { HeaderProfileSkeleton } from "@/components/skeletons/header-profile-skeleton";
+import { useLogout } from "@/hooks/useLogout";
 
 function Header() {
   const { profile, isLoading } = useProfileStore();
-  const router = useRouter();
-
-  const onLogout = async () => {
-    const supabase = createClient();
-
-    await supabase.auth.signOut();
-    router.push("/auth/login");
-  };
+  const logout = useLogout();
 
   return (
     <header className="fixed top-0 left-0 bg-white shadow h-16 w-full px-8">
@@ -54,7 +46,7 @@ function Header() {
                     <DropdownMenuLabel>My Account</DropdownMenuLabel>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem
-                      onClick={onLogout}
+                      onClick={logout}
                       className="text-red-500 hover:text-red-500!">
                       Logout
                     </DropdownMenuItem>

@@ -3,16 +3,24 @@
 import { ROUTES } from "@/lib/routes";
 import { cn } from "@/lib/utils";
 import useProfileStore from "@/zustand/useProfileStore";
-import { HomeIcon, SettingsIcon, ShoppingBagIcon } from "lucide-react";
+import {
+  HomeIcon,
+  LogOutIcon,
+  SettingsIcon,
+  ShoppingBagIcon,
+} from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { SidebarSkeleton } from "@/components/skeletons/sidebar-skeleton";
+import { Button } from "./ui/button";
+import { useLogout } from "@/hooks/useLogout";
 
 function Sidebar() {
   const { profile, isLoading } = useProfileStore();
   const pathname = usePathname();
+  const logout = useLogout();
 
-  const navLinkClassName = (route: string) =>
+  const navLinkClassName = (route?: string) =>
     cn(
       "h-12 px-3 flex items-center gap-3 rounded-md text-xl border-2 transition-colors border-transparent hover:bg-gray-200",
       {
@@ -42,6 +50,14 @@ function Sidebar() {
         href={ROUTES.PROFILE(profile.id)}>
         <SettingsIcon className="size-6" /> Profile
       </Link>
+      <div className="flex grow items-end">
+        <Button
+          onClick={logout}
+          className="h-12 w-full text-xl border-red-600 text-red-600 hover:text-red-600 hover:bg-red-50"
+          variant="outline">
+          <LogOutIcon className="size-6" /> Logout
+        </Button>
+      </div>
     </div>
   );
 }

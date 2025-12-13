@@ -22,6 +22,16 @@ export const ROUTES = {
   PROFILE: (userId: string) => `/profiles/${userId}`,
 };
 
+export const PUBLIC_ROUTES = [
+  ROUTES.LOGIN,
+  ROUTES.SIGN_UP,
+  ROUTES.SIGN_UP_SUCCESS,
+  ROUTES.FORGOT_PASSWORD,
+  ROUTES.UPDATE_PASSWORD,
+  ROUTES.AUTH_ERROR,
+  ROUTES.AUTH_CONFIRM,
+];
+
 export const PRIVATE_ROUTES = [
   ROUTES.TEAM,
   ROUTES.PROFILE_SETUP,

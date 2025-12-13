@@ -5,23 +5,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Users, Calendar, Hash } from "lucide-react";
 import CopyTextButton from "@/components/copy-text-button";
+import { TeamPageSkeleton } from "@/components/skeletons/team-page-skeleton";
 
 function TeamPage() {
   const { profile, isLoading } = useProfileStore();
 
   if (isLoading) {
-    return (
-      <div className="container mx-auto p-6">
-        <div className="animate-pulse space-y-6">
-          <div className="h-10 bg-gray-200 rounded w-1/3"></div>
-          <div className="grid gap-6 md:grid-cols-3">
-            <div className="h-32 bg-gray-200 rounded"></div>
-            <div className="h-32 bg-gray-200 rounded"></div>
-            <div className="h-32 bg-gray-200 rounded"></div>
-          </div>
-        </div>
-      </div>
-    );
+    return <TeamPageSkeleton />;
   }
 
   if (!profile) {
