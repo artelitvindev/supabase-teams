@@ -26,7 +26,7 @@ function Sidebar() {
   }
 
   return (
-    <div className="basis-[300px] flex flex-col gap-2 py-6 px-4 bg-gray-50 border-gray-200 border rounded-md min-h-[calc(100vh-90px)]">
+    <div className="flex flex-col gap-2 py-6 px-4 bg-gray-50 border-gray-200 border rounded-md grow">
       <Link
         className={navLinkClassName(ROUTES.TEAM(profile.team_id))}
         href={ROUTES.TEAM(profile.team_id)}>
