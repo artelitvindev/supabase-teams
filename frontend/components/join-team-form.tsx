@@ -17,7 +17,7 @@ function JoinTeamForm() {
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const subapase = createClient();
   const router = useRouter();
-  useProfile();
+  const { refetch } = useProfile();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -32,6 +32,9 @@ function JoinTeamForm() {
         toast.error(errorMsg.error);
         return;
       }
+
+      // Оновлюємо профіль після приєднання до команди
+      await refetch();
 
       router.push(ROUTES.TEAM(data.team.id));
       toast.success("You've joined to team ", data.team.name);

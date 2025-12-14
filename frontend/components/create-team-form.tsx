@@ -16,7 +16,7 @@ function CreateTeamForm() {
   const [teamSlug, setTeamSlug] = React.useState("");
   const [errorMessage, setErrorMessage] = React.useState<string | null>(null);
   const router = useRouter();
-  useProfile();
+  const { refetch } = useProfile();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -43,6 +43,9 @@ function CreateTeamForm() {
           toast.error(`Error: ${error.message}`);
           return;
         }
+
+        // Оновлюємо профіль після створення команди
+        await refetch();
 
         router.push(ROUTES.TEAM(data.team.id));
         toast.success("Team created successfully!");
