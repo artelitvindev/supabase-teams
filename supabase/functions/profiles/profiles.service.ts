@@ -45,18 +45,50 @@ export class ProfilesService {
       throw new Error("Username is required");
     }
 
+    const emailEntry = formData.get("email");
+    const email = typeof emailEntry === "string" ? emailEntry.trim() : null;
+
+    // Check if email is being changed and if it's already taken
+    if (email) {
+      const { data: existingProfile, error: checkError } =
+        await this.supabaseAdmin
+          .from("profiles")
+          .select("id")
+          .eq("email", email)
+          .neq("id", userId)
+          .maybeSingle();
+
+      if (checkError) {
+        throw checkError;
+      }
+
+      if (existingProfile) {
+        throw new Error("This email is already in use by another user");
+      }
+    }
+
     const avatarEntry = formData.get("avatar");
-    const avatar = avatarEntry instanceof File ? avatarEntry : null;
+    const avatar =
+      avatarEntry instanceof File && avatarEntry.size > 0 ? avatarEntry : null;
 
     const avatarUrl = avatar ? await this.uploadAvatar(avatar, userId) : null;
 
+    const updateData: Record<string, unknown> = {
+      name: username,
+      profile_completed: true,
+    };
+
+    if (avatarUrl) {
+      updateData.avatar_url = avatarUrl;
+    }
+
+    if (email) {
+      updateData.email = email;
+    }
+
     const { data, error: updateError } = await this.supabaseAdmin
       .from("profiles")
-      .update({
-        name: username,
-        ...(avatarUrl && { avatar_url: avatarUrl }),
-        profile_completed: true,
-      })
+      .update(updateData)
       .eq("id", userId)
       .select("*")
       .single();

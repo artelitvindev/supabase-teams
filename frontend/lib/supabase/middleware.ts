@@ -46,6 +46,8 @@ export async function updateSession(request: NextRequest) {
   const isTeamsSelectPage = pathname === ROUTES.TEAMS_SELECT;
   const isJoinTeamPage = pathname === ROUTES.JOIN_TEAM;
   const isCreateTeamPage = pathname === ROUTES.CREATE_TEAM;
+  const isProfileEditPage = pathname === ROUTES.EDIT_PROFILE;
+  const isProfileViewPage = pathname.startsWith("/profiles/");
   const isTeamPage =
     pathname.startsWith("/teams") && pathname !== ROUTES.TEAMS_SELECT;
 
@@ -80,10 +82,15 @@ export async function updateSession(request: NextRequest) {
         return NextResponse.redirect(url);
       }
     } else {
-      // Has team - redirect from setup pages to home
-      if (!isTeamPage) {
+      // Has team - redirect only from onboarding pages to team page
+      if (
+        isProfileSetupPage ||
+        isTeamsSelectPage ||
+        isJoinTeamPage ||
+        isCreateTeamPage
+      ) {
         const url = request.nextUrl.clone();
-        url.pathname = ROUTES.TEAM(profile.team_id); // This should redirect to team page
+        url.pathname = ROUTES.TEAM(profile.team_id);
         return NextResponse.redirect(url);
       }
     }

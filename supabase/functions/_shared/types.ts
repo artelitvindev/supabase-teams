@@ -11,4 +11,6 @@ export interface Profile {
   name: string;
   avatar_url: string;
   team_id: string;
+  email?: string;
+  profile_completed?: boolean;
 }

@@ -20,6 +20,7 @@ export const ROUTES = {
 
   // User
   PROFILE: (userId: string) => `/profiles/${userId}`,
+  EDIT_PROFILE: "/profile",
 };
 
 export const PUBLIC_ROUTES = [

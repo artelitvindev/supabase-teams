@@ -12,6 +12,7 @@ export interface Profile {
   avatar_url: string;
   team_id: string | null;
   profile_completed: boolean;
+  email?: string;
 }
 
 export type ProfilesListReponse = Profile[];

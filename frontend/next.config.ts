@@ -6,6 +6,20 @@ import { resolve } from "path";
 config({ path: resolve(__dirname, "../.env") });
 
 const nextConfig: NextConfig = {
+  images: {
+    remotePatterns: [
+      {
+        protocol: "http",
+        hostname: "127.0.0.1",
+        port: "54321",
+        pathname: "/storage/v1/object/public/**",
+      },
+      {
+        protocol: "https",
+        hostname: "**",
+      },
+    ],
+  },
   turbopack: {
     rules: {
       "*.svg": {
