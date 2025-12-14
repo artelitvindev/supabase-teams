@@ -50,7 +50,7 @@ export function SignUpForm({
         },
       });
       if (error) throw error;
-      console.log("success");
+
       router.push(ROUTES.SIGN_UP_SUCCESS);
     } catch (error: unknown) {
       setError(error instanceof Error ? error.message : "An error occurred");

@@ -1,6 +1,5 @@
 "use client";
 
-import useProfileStore from "@/zustand/useProfileStore";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Users, Calendar, Hash } from "lucide-react";
@@ -14,11 +13,10 @@ function TeamPage() {
   const params = useParams();
   const teamId = params.teamId as string;
 
-  const { profile, isLoading: isLoadingProfile } = useProfileStore();
   const { team, isLoading: isLoadingTeam } = useTeam(teamId);
   const { teamMembers, isLoading: isLoadingTeamMembers } = useTeamMembers();
 
-  if (isLoadingProfile || isLoadingTeam || isLoadingTeamMembers) {
+  if (isLoadingTeam || isLoadingTeamMembers) {
     return <TeamPageSkeleton />;
   }
 

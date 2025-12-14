@@ -19,7 +19,6 @@ export function useTeamMembers() {
           method: "GET",
         }
       );
-      console.log(data);
 
       if (error) {
         setIsLoading(false);

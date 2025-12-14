@@ -29,7 +29,6 @@ function JoinTeamForm() {
 
       if (error && error instanceof FunctionsHttpError) {
         const errorMsg = await error.context.json();
-        console.log(errorMsg.error);
         toast.error(errorMsg.error);
         return;
       }

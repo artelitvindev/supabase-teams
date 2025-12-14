@@ -1,5 +1,6 @@
 import { SupabaseClient } from "npm:@supabase/supabase-js@2.81.1";
-import { ProfilesListReponse, Profile } from "./profiles.dto.ts";
+import { ProfilesListReponse } from "./profiles.dto.ts";
+import { Profile } from "../_shared/types.ts";
 
 export class ProfilesService {
   constructor(
@@ -15,6 +16,7 @@ export class ProfilesService {
       .single();
 
     if (error) {
+      console.log(error);
       throw error;
     }
     return data;
@@ -25,8 +27,6 @@ export class ProfilesService {
       .from("profiles")
       .select("*")
       .eq("team_id", teamId);
-
-    console.log(data, error);
 
     if (error) {
       throw error;
