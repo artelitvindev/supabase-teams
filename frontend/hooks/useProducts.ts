@@ -7,6 +7,7 @@ import {
   ProductsQueryParams,
 } from "@/types/products.api";
 import { toast } from "react-toastify";
+import { toastSupabaseError } from "@/utils/toastSupabaseError";
 
 const SUPABASE_URL = process.env.NEXT_PUBLIC_SUPABASE_URL;
 
@@ -42,26 +43,16 @@ export function useProducts(teamId?: string) {
           }
         });
 
-        const {
-          data: { session },
-        } = await supabase.auth.getSession();
-
-        const response = await fetch(
-          `${SUPABASE_URL}/functions/v1/products?${searchParams.toString()}`,
-          {
-            headers: {
-              Authorization: `Bearer ${session?.access_token}`,
-              "Content-Type": "application/json",
-            },
-          }
+        const { data, error } = await supabase.functions.invoke(
+          `products?${searchParams.toString()}`,
+          { method: "GET" }
         );
 
-        if (!response.ok) {
-          const errorData = await response.json();
-          throw new Error(errorData.error || "Failed to fetch products");
+        if (error) {
+          toastSupabaseError(error);
+          return;
         }
 
-        const data = await response.json();
         setProducts(data);
       } catch (err) {
         console.error("Error fetching products:", err);
@@ -69,7 +60,7 @@ export function useProducts(teamId?: string) {
         toast.error("Failed to load products");
       }
     },
-    [filters, teamId, supabase, setProducts, setLoading, setError]
+    []
   );
 
   const createProduct = async (dto: CreateProductDto) => {
