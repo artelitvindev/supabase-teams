@@ -33,7 +33,19 @@ export function useProfile() {
   }, [setIsLoading, setProfile]);
 
   useEffect(() => {
-    fetchUser();
+    let mounted = true;
+
+    const loadProfile = async () => {
+      if (mounted) {
+        await fetchUser();
+      }
+    };
+
+    loadProfile();
+
+    return () => {
+      mounted = false;
+    };
   }, [fetchUser]);
 
   const isAuthError = errorStatus === 401 || errorStatus === 403;

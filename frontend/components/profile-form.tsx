@@ -11,6 +11,7 @@ import useProfileStore from "@/zustand/useProfileStore";
 import Image from "next/image";
 import { Avatar } from "@/components/ui/avatar";
 import { Profile } from "@/types/profiles.api";
+import { toastSupabaseError } from "@/utils/toastSupabaseError";
 
 interface ProfileFormProps {
   profile: Profile;
@@ -73,23 +74,15 @@ export function ProfileForm({ profile, isOwnProfile }: ProfileFormProps) {
         formData.append("avatar", avatar);
       }
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_SUPABASE_URL}/functions/v1/profiles`,
-        {
-          method: "PATCH",
-          headers: {
-            Authorization: `Bearer ${session.access_token}`,
-          },
-          body: formData,
-        }
-      );
+      const { data, error } = await supabase.functions.invoke("profiles", {
+        method: "PATCH",
+        body: formData,
+      });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || "Failed to update profile");
+      if (error) {
+        toastSupabaseError(error);
+        return;
       }
-
-      const data = await response.json();
 
       if (data) {
         setStoreProfile(data);

@@ -32,7 +32,7 @@ export default function RootLayout({
         <ProfileProvider>
           <Header />
           <div className="px-4"> {children}</div>
-          <ToastContainer />
+          <ToastContainer position="bottom-right" />
         </ProfileProvider>
       </body>
     </html>

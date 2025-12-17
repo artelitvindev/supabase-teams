@@ -34,9 +34,21 @@ export const PUBLIC_ROUTES = [
 ];
 
 export const PRIVATE_ROUTES = [
-  ROUTES.TEAM,
   ROUTES.PROFILE_SETUP,
   ROUTES.TEAMS_SELECT,
   ROUTES.JOIN_TEAM,
   ROUTES.CREATE_TEAM,
 ];
+
+// Helper to check if a path is protected
+export const isProtectedPath = (pathname: string): boolean => {
+  // Check static private routes
+  if (PRIVATE_ROUTES.includes(pathname)) {
+    return true;
+  }
+  // Check dynamic routes
+  if (pathname.startsWith("/teams/") || pathname.startsWith("/profiles/")) {
+    return true;
+  }
+  return false;
+};

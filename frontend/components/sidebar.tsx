@@ -33,6 +33,27 @@ function Sidebar() {
     return <SidebarSkeleton />;
   }
 
+  // If user doesn't have a team, they shouldn't be able to access team routes
+  if (!profile.team_id) {
+    return (
+      <div className="flex flex-col gap-2 py-6 px-4 bg-gray-50 border-gray-200 border rounded-md grow">
+        <Link
+          className={navLinkClassName(ROUTES.PROFILE(profile.id))}
+          href={ROUTES.PROFILE(profile.id)}>
+          <SettingsIcon className="size-6" /> Profile
+        </Link>
+        <div className="flex grow items-end">
+          <Button
+            onClick={logout}
+            className="h-12 w-full text-xl border-red-600 text-red-600 hover:text-red-600 hover:bg-red-50"
+            variant="outline">
+            <LogOutIcon className="size-6" /> Logout
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col gap-2 py-6 px-4 bg-gray-50 border-gray-200 border rounded-md grow">
       <Link
