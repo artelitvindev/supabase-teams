@@ -3,7 +3,7 @@ import { Profile } from "@/types/profiles.api";
 
 interface ProfileStore {
   profile: Profile | null;
-  setProfile: (profileRes: Profile) => void;
+  setProfile: (profileRes: Profile | null) => void;
   isLoading: boolean;
   setIsLoading: (isLoading: boolean) => void;
 }

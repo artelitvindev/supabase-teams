@@ -52,6 +52,10 @@ export function ProductCard({
               alt={product.title}
               fill
               className="object-cover"
+              unoptimized={
+                product.image.includes("127.0.0.1") ||
+                product.image.includes("localhost")
+              }
             />
           ) : (
             <div className="w-full h-full flex items-center justify-center text-gray-400">
@@ -87,6 +91,10 @@ export function ProductCard({
                   width={24}
                   height={24}
                   className="object-cover"
+                  unoptimized={
+                    product.creator_avatar.includes("127.0.0.1") ||
+                    product.creator_avatar.includes("localhost")
+                  }
                 />
               ) : (
                 <div className="w-full h-full bg-blue-500 flex items-center justify-center text-white text-xs">

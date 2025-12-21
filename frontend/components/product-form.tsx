@@ -99,7 +99,9 @@ export function ProductForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       <div>
-        <Label htmlFor="title">Title *</Label>
+        <Label className="mb-2" htmlFor="title">
+          Title *
+        </Label>
         <Input
           id="title"
           value={title}
@@ -111,7 +113,9 @@ export function ProductForm({
       </div>
 
       <div>
-        <Label htmlFor="description">Description</Label>
+        <Label className="mb-2" htmlFor="description">
+          Description
+        </Label>
         <textarea
           id="description"
           value={description}
@@ -123,15 +127,20 @@ export function ProductForm({
       </div>
 
       <div>
-        <Label htmlFor="image">Image</Label>
-        <div className="space-y-2">
+        <Label className="mb-2" htmlFor="image">
+          Image
+        </Label>
+        <div className="space-y-2 max-w-2xl">
           {image && (
-            <div className="relative w-full h-48 rounded-md overflow-hidden border">
+            <div className="relative w-full h-72 rounded-md overflow-hidden border">
               <Image
                 src={image}
                 alt="Product preview"
                 fill
                 className="object-cover"
+                unoptimized={
+                  image.includes("127.0.0.1") || image.includes("localhost")
+                }
               />
               {canEdit && !isSubmitting && (
                 <button
