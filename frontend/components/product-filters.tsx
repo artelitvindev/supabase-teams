@@ -5,11 +5,12 @@ import { Button } from "@/components/ui/button";
 import { Search, Filter, X } from "lucide-react";
 import { useState, useEffect } from "react";
 import { ProductsQueryParams } from "@/types/products.api";
+import { Profile } from "@/types/profiles.api";
 
 interface ProductFiltersProps {
   filters: ProductsQueryParams;
   onFiltersChange: (filters: Partial<ProductsQueryParams>) => void;
-  teamMembers?: Array<{ id: string; name: string }>;
+  teamMembers?: Profile[];
 }
 
 export function ProductFilters({
@@ -17,18 +18,18 @@ export function ProductFilters({
   onFiltersChange,
   teamMembers = [],
 }: ProductFiltersProps) {
-  const [searchInput, setSearchInput] = useState(filters.search || "");
+  const [searchInput, setSearchInput] = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
       if (searchInput !== filters.search) {
-        onFiltersChange({ search: searchInput || undefined });
+        onFiltersChange({ search: searchInput });
       }
     }, 500);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [searchInput, filters.search, onFiltersChange]);
+  }, [searchInput, onFiltersChange, filters.search]);
 
   const handleClearFilters = () => {
     setSearchInput("");
@@ -80,7 +81,7 @@ export function ProductFilters({
 
       {showFilters && (
         <div className="p-4 border rounded-lg bg-gray-50 space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 lg:grid-cols-[0.5fr_0.5fr_1fr] xl:grid-cols-3 gap-4">
             {/* Status Filter */}
             <div>
               <label className="block text-sm font-medium mb-2">Status</label>

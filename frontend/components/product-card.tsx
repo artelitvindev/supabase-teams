@@ -7,12 +7,17 @@ import { Card } from "@/components/ui/card";
 import { Edit, Trash2, CheckCircle } from "lucide-react";
 import Image from "next/image";
 import { formatDistanceToNow } from "date-fns";
+import {
+  ActivateProductModalData,
+  DeleteProductModalData,
+} from "@/app/teams/[teamId]/products/page";
+import { cn } from "@/lib/utils";
 
 interface ProductCardProps {
   product: ProductWithCreator;
   onEdit: (product: ProductWithCreator) => void;
-  onDelete: (productId: string) => void;
-  onActivate: (productId: string) => void;
+  onDelete: (data: DeleteProductModalData) => void;
+  onActivateModalOpen: (data: ActivateProductModalData) => void;
   currentUserId?: string;
 }
 
@@ -20,7 +25,7 @@ export function ProductCard({
   product,
   onEdit,
   onDelete,
-  onActivate,
+  onActivateModalOpen,
   currentUserId,
 }: ProductCardProps) {
   const isOwner = currentUserId === product.created_by;
@@ -43,9 +48,13 @@ export function ProductCard({
 
   return (
     <Card className="p-4 hover:shadow-lg transition-shadow">
-      <div className="flex gap-4">
+      <div className="flex gap-4 max-sm:flex-col">
         {/* Image */}
-        <div className="w-24 h-24 shrink-0 rounded-md overflow-hidden bg-gray-100 relative">
+        <div
+          className={cn(
+            "w-full h-60 sm:size-24 shrink-0 rounded-md overflow-hidden bg-gray-100 relative",
+            { "max-sm:hidden": !product.image }
+          )}>
           {product.image ? (
             <Image
               src={product.image}
@@ -103,16 +112,21 @@ export function ProductCard({
               )}
             </Avatar>
             <span>{product.creator_name}</span>
-            <span>•</span>
-            <span>
+            <span className="max-sm:hidden">•</span>
+            <span className="max-sm:hidden">
               {formatDistanceToNow(new Date(product.created_at), {
                 addSuffix: true,
               })}
             </span>
           </div>
+          <span className="sm:hidden block mb-4 text-sm text-gray-500">
+            {formatDistanceToNow(new Date(product.created_at), {
+              addSuffix: true,
+            })}
+          </span>
 
           {/* Actions */}
-          <div className="flex gap-2">
+          <div className="flex gap-2 flex-wrap">
             {canEdit && (
               <Button
                 size="sm"
@@ -127,7 +141,7 @@ export function ProductCard({
               <Button
                 size="sm"
                 variant="default"
-                onClick={() => onActivate(product.id)}>
+                onClick={() => onActivateModalOpen({ open: true, product })}>
                 <CheckCircle className="w-4 h-4 mr-1" />
                 Activate
               </Button>
@@ -136,7 +150,7 @@ export function ProductCard({
               <Button
                 size="sm"
                 variant="outline"
-                onClick={() => onDelete(product.id)}
+                onClick={() => onDelete({ open: true, product })}
                 className="text-red-600 hover:text-red-700 hover:bg-red-50">
                 <Trash2 className="w-4 h-4 mr-1" />
                 Delete

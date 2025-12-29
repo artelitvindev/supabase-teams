@@ -8,6 +8,8 @@ import { TeamPageSkeleton } from "@/components/skeletons/team-page-skeleton";
 import { useTeamMembers } from "@/hooks/useTeamMembers";
 import { useTeam } from "@/hooks/useTeam";
 import { useParams } from "next/navigation";
+import useProfileStore from "@/zustand/useProfileStore";
+import { usePresenceStore } from "@/zustand/usePresenceStore";
 
 function TeamPage() {
   const params = useParams();
@@ -15,6 +17,8 @@ function TeamPage() {
 
   const { team, isLoading: isLoadingTeam } = useTeam(teamId);
   const { teamMembers, isLoading: isLoadingTeamMembers } = useTeamMembers();
+  const { profile } = useProfileStore();
+  const { onlineUserIds } = usePresenceStore();
 
   if (isLoadingTeam || isLoadingTeamMembers) {
     return <TeamPageSkeleton />;
@@ -38,7 +42,7 @@ function TeamPage() {
   );
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="container mx-auto py-6 space-y-6">
       {/* Team Header */}
       <div className="space-y-2">
         <h1 className="text-4xl font-bold tracking-tight">{team.name}</h1>
@@ -46,7 +50,7 @@ function TeamPage() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-base font-medium">Team Slug</CardTitle>
@@ -73,7 +77,7 @@ function TeamPage() {
           </CardContent>
         </Card>
 
-        <Card>
+        <Card className="sm:max-lg:col-span-2">
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-base font-medium">Created</CardTitle>
             <Calendar className="size-5 text-muted-foreground" />
@@ -104,26 +108,35 @@ function TeamPage() {
               <div
                 key={"team-member-" + teamMember.id}
                 className="flex items-center gap-4 p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
-                <Avatar className="h-12 w-12">
-                  <AvatarImage
-                    src={teamMember.avatar_url}
-                    alt={teamMember.name}
-                  />
-                  <AvatarFallback>
-                    {teamMember?.name
-                      ?.split(" ")
-                      .map((n) => n[0])
-                      .join("")
-                      .toUpperCase()}
-                  </AvatarFallback>
-                </Avatar>
+                <div className="relative">
+                  <Avatar className="h-12 w-12">
+                    <AvatarImage
+                      src={teamMember.avatar_url}
+                      alt={teamMember.name}
+                    />
+                    <AvatarFallback>
+                      {teamMember?.name
+                        ?.split(" ")
+                        .map((n) => n[0])
+                        .join("")
+                        .toUpperCase()}
+                    </AvatarFallback>
+                  </Avatar>
+
+                  {onlineUserIds.includes(teamMember.id) ? (
+                    <div className="size-3 rounded-full bg-green-400 border-2 border-white absolute bottom-0 right-0" />
+                  ) : (
+                    <div className="size-3 rounded-full bg-gray-400 border-2 border-white absolute bottom-0 right-0" />
+                  )}
+                </div>
                 <div className="flex-1">
                   <p className="font-medium">{teamMember.name}</p>
-                  <p className="text-sm text-muted-foreground">You</p>
+                  {profile && teamMember.id === profile.id && (
+                    <p className="text-sm text-muted-foreground">You</p>
+                  )}
                 </div>
               </div>
             ))}
-            {/* TODO: Fetch and display other team members */}
           </div>
         </CardContent>
       </Card>
@@ -143,7 +156,7 @@ function TeamPage() {
                 <p>{team.id}</p>
                 <CopyTextButton
                   text={team.id}
-                  className="group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 right-3"
+                  className="max-md:opacity-0 max-md:size-full group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 right-3"
                 />
               </div>
             </div>
@@ -155,7 +168,7 @@ function TeamPage() {
                 <p>{team.invite_code}</p>
                 <CopyTextButton
                   text={team.invite_code}
-                  className="group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 right-3"
+                  className="max-md:opacity-0 max-md:size-full group-hover:opacity-100 opacity-0 absolute top-1/2 -translate-y-1/2 right-3"
                 />
               </div>
             </div>
